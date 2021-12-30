@@ -5,6 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        include:
         - mediawiki_version: 1_35
         - mediawiki_version: 1_36
         - mediawiki_version: 1_37
