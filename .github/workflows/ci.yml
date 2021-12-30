@@ -1,4 +1,4 @@
-name: MediaWiki Extension
+name: CI
 on: [push]
 jobs:
   build:
