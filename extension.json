@@ -3,7 +3,7 @@
 	"author": [
 		"harugon"
 	],
-	"url": "https://www.mediawiki.org/wiki/Extension:CiteThisPage",
+	"url": "https://github.com/harugon/mediawiki-extensions-cloudflare",
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
