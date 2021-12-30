@@ -1,0 +1,52 @@
+{
+	"name": "Cloudflare",
+	"author": [
+		"harugon"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:CiteThisPage",
+	"license-name": "MIT",
+	"type": "other",
+	"requires": {
+		"MediaWiki": ">= 1.35.0"
+	},
+	"MessagesDirs": {
+		"Cloudflare": [
+			"i18n"
+		]
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\Cloudflare\\": "includes/"
+	},
+	"load_composer_autoloader": true,
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\Cloudflare\\HookHandler",
+			"services": [ "MainConfig" ]
+		}
+	},
+	"Hooks": {
+		"LocalFilePurgeThumbnails": "main",
+		"TitleSquidURLs": "main"
+	},
+	"ConfigRegistry": {
+		"cloudflare": "GlobalVarConfig::newInstance"
+	},
+	"config": {
+		"CloudflareEmail": {
+			"description": "Cloudflare Email",
+			"public": false,
+			"value": false
+		},
+		"CloudflareAPIKey": {
+			"description": "Cloudflare APIKey",
+			"public": false,
+			"value": false
+		},
+		"CloudflareZoneID": {
+			"description": "Cloudflare ZoneID",
+			"public": false,
+			"value": true
+		}
+	},
+	"manifest_version": 2
+}
