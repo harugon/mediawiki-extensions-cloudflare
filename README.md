@@ -3,6 +3,10 @@ MediaWikiの投稿、更新時にCloudflareのキャッシュをパージしま�
 
 ## Install
 
+[Releases · harugon/mediawiki\-extensions\-cloudflare](https://github.com/harugon/mediawiki-extensions-cloudflare/releases)
+
+上記のURLより``Cloudflare-{バーション}.tar.gz``のファイルをダウンロードしextensionsに展開
+
 LocalSettings.phpに
 CloudflareのAPI情報とともに追記します。
 ```php
