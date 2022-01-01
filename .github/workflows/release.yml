@@ -10,7 +10,7 @@ jobs:
       EXT_NAME: Cloudflare
     steps:
       - name: Setup PHP 7.4
-          run: sudo update-alternatives --set php /usr/bin/php7.4
+        run: sudo update-alternatives --set php /usr/bin/php7.4
       - name: Extract branch name
         id: extract_branch
         run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF#refs/tags/})"
