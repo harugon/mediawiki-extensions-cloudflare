@@ -27,7 +27,6 @@ class HookHandlerTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider urlDataProvider
-	 * @covers HookHandler::onTitleSquidURLs
 	 */
 	public function testonTitleSquidURLs( array $urls ) {
 		$Title = $this->getMockBuilder( \Title::class )
@@ -45,7 +44,6 @@ class HookHandlerTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider FileUrlDataProvider
-	 * @covers HookHandler::onLocalFilePurgeThumbnails
 	 */
 	public function testonLocalFilePurgeThumbnails( array $urls, array $expected ) {
 		$File = $this->getMockBuilder( \File::class )
