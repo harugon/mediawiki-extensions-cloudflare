@@ -31,9 +31,9 @@ class HookHandler implements
 	 */
 	public function onTitleSquidURLs( $title, &$urls ) {
 		// TODO: MobileFrontendの後に読み込まれる必要性あり
-        if($this->config->get('CloudflarePurgePage')){
-            $purge = $this->purge( $urls );
-        }
+		if ( $this->config->get( 'CloudflarePurgePage' ) ) {
+			$purge = $this->purge( $urls );
+		}
 	}
 
 	/**
@@ -45,13 +45,13 @@ class HookHandler implements
 	 */
 	public function onLocalFilePurgeThumbnails( $file, $archiveName, $urls ) {
 		// TODO:画像だけ違うzoneの可能性ある??
-        if($this->config->get('CloudflarePurgeFile')){
-            $serve = $this->config->get( 'Server' );
-            $purgeURL = array_map( static function ( string $path )use( $serve ){
-                return $serve . $path;
-            }, $urls );
-            $purge = $this->purge( $purgeURL );
-        }
+		if ( $this->config->get( 'CloudflarePurgeFile' ) ) {
+			$serve = $this->config->get( 'Server' );
+			$purgeURL = array_map( static function ( string $path )use( $serve ){
+				return $serve . $path;
+			}, $urls );
+			$purge = $this->purge( $purgeURL );
+		}
 	}
 
 	/**
@@ -60,7 +60,7 @@ class HookHandler implements
 	 * @return bool
 	 */
 	public function purge( array $urls ): bool {
-        wfDebugLog('extensions',join(',',$urls));
+		wfDebugLog( 'extensions', implode( ',', $urls ) );
 		$email = $this->config->get( 'CloudflareZoneID' );
 		$apiKey = $this->config->get( 'CloudflareAPIKey' );
 		$zoneID = $this->config->get( 'CloudflareZoneID' );
@@ -70,7 +70,7 @@ class HookHandler implements
 			$zone = new Cloudflare_API\Endpoints\Zones( $adapter );
 			return $zone->cachePurge( $zoneID, $urls );
 		}catch ( Cloudflare_API\Endpoints\EndpointException | \Exception $e ) {
-            # TODO:ログイン出来ない場合など…
+			# TODO:ログイン出来ない場合など…
 			error_log( $e->getMessage() );
 		}
 		return false;
