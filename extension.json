@@ -1,10 +1,11 @@
 {
 	"name": "Cloudflare",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"author": [
 		"harugon"
 	],
 	"url": "https://github.com/harugon/mediawiki-extensions-cloudflare",
+	"descriptionmsg": "cloudflare-desc",
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
@@ -43,9 +44,14 @@
 			"public": false,
 			"value": false
 		},
-		"CloudflareZoneID": {
-			"description": "Cloudflare ZoneID",
-			"public": false,
+		"CloudflarePurgePage": {
+			"description": "Purge a page from cache",
+			"public": true,
+			"value": false
+		},
+		"CloudflarePurgeFile": {
+			"description": "Purge a File from cache",
+			"public": true,
 			"value": true
 		}
 	},
