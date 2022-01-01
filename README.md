@@ -1,4 +1,6 @@
 # Cloudflare® - MediaWiki
+[![CI](https://github.com/harugon/mediawiki-extensions-cloudflare/actions/workflows/ci.yml/badge.svg)](https://github.com/harugon/mediawiki-extensions-cloudflare/actions/workflows/ci.yml)
+
 MediaWikiの画像　更新時にCloudflareのキャッシュをパージします
 
 [MediaWikiでCloudFlareを使う – harugonのブログ](https://blog.r9g.net/archives/121)
