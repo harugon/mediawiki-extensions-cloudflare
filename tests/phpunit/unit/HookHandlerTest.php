@@ -1,13 +1,14 @@
 <?php
 namespace MediaWiki\Extension\Clouflare\Tests;
 
+use Config;
 use HashConfig;
 use MediaWiki\Extension\Cloudflare\HookHandler;
 use MediaWikiUnitTestCase;
 use MultiConfig;
 
 class HookHandlerTest extends MediaWikiUnitTestCase {
-	/** @var MultiConfig */
+	/** @var Config */
 	protected $config;
 	/** @var string */
 	protected $server = 'サーバ';
@@ -19,6 +20,8 @@ class HookHandlerTest extends MediaWikiUnitTestCase {
 			new HashConfig( [ 'CloudflareEmail' => '' ] ),
 			new HashConfig( [ 'CloudflareAPIKey' => '' ] ),
 			new HashConfig( [ 'CloudflareZoneID' => '' ] ),
+			new HashConfig( [ 'CloudflarePurgeFile' => true ] ),
+			new HashConfig( [ 'CloudflarePurgePage' => true ] ),
 		] );
 	}
 
