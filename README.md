@@ -41,9 +41,10 @@ $wgCloudflareZoneID = '';
 
 ## 問題
 * API Rate limits
-* MobileFrontend使用サイトでの記事ページのpurgeはできません
-* MobileFrontendをurl分離してCloudflareのMobile redirectで分岐している場合は使用できますが拡張の読み込み位置に注意する必要があります？？
-* Varnishを挟んでいる場合、更新前のコンテンツが読み込まれる可能性あります（Cloudflare->Varnish->origin 先にCfが消える可能性がある？）
+* MobileFrontend使用サイトでの記事ページのpurge
+* Varnishを挟んでいる場合　‥（Cloudflare->Varnish->origin 先にCfが消える可能性がある？）
+* $wgEventRelayerConfig['cdn-url-purges'] を使うと大げさ？
+* guzzleを使っている
 
 ## Disclosure
 
