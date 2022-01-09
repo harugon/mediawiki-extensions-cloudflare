@@ -32,13 +32,13 @@ $wgCloudflareZoneID = '';
 
 ## Configuration
 
-| Variable                 | Default value | Notes                                                                                                                     |
-| ------------------------ | ------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `$wgCloudflareEmail`     | `""`          | Your email used for logging in Cloudflare                                                                                 |
-| `$wgCloudflareAPIKey`    | `""`          | API key ( [API token - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) &rarr; Your global API key is needed ) |
-| `$wgCloudflareZoneID`    | `""`          | Site (URL) ID (You can get it from the dashboard of the site)                                                             |
-| `$wgCloudflarePurgePage` | `false`       | Purge cache when articles are updated                                                                                     |
-| `$wgCloudflarePurgeFile` | `true`        | Purge cache when files (images) are updated                                                                               |
+| Variable                 | Default value | Notes                                                                                                                   |
+| ------------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `$wgCloudflareEmail`     | `""`          | Your email used for logging in Cloudflare                                                                               |
+| `$wgCloudflareAPIKey`    | `""`          | API key ([API token - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) &rarr; Your global API key is needed) |
+| `$wgCloudflareZoneID`    | `""`          | Site (URL) ID (You can get it from the dashboard of the site)                                                           |
+| `$wgCloudflarePurgePage` | `false`       | Purge cache when articles are updated                                                                                   |
+| `$wgCloudflarePurgeFile` | `true`        | Purge cache when files (images) are updated                                                                             |
 
 ### Caching article pages
 
