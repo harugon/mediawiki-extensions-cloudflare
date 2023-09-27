@@ -6,11 +6,13 @@ use Cloudflare\API as Cloudflare_API;
 use Config;
 use File;
 use MediaWiki\Hook\LocalFilePurgeThumbnailsHook;
+use MediaWiki\Page\Hook\PageDeleteCompleteHook;
 use MediaWiki\Hook\TitleSquidURLsHook;
 use Title;
 
 class HookHandler implements
 	TitleSquidURLsHook,
+	PageDeleteCompleteHook,
 	LocalFilePurgeThumbnailsHook
 {
 	/** @var Config */
@@ -52,6 +54,23 @@ class HookHandler implements
 			}, $urls );
 			$purge = $this->purge( $purgeURL );
 		}
+	}
+
+	/**
+	 * Purge URL when a page is deleted
+	 *
+	 * MediaWiki\Page\ProperPageIdentity $page
+	 * MediaWiki\Permissions\Authority $deleter
+	 * string $reason
+	 * int $pageID
+	 * MediaWiki\Revision\RevisionRecord $deletedRev
+	 * ManualLogEntry $logEntry
+	 * int $archivedRevisionCount
+	 */
+	public function onPageDeleteComplete( $page, $deleter, $reason, $pageID, $deletedRev, $logEntry, $archivedRevisionCount ) {
+		$title = $page->getTitle();
+		$url = $title->getFullURL();
+		$purge = $this->purge( [ $url ] );
 	}
 
 	/**
