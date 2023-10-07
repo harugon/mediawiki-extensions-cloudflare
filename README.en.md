@@ -1,27 +1,18 @@
 # Cloudflare® - MediaWiki
 
-[![CI](https://github.com/harugon/mediawiki-extensions-cloudflare/actions/workflows/ci.yml/badge.svg)](https://github.com/harugon/mediawiki-extensions-cloudflare/actions/workflows/ci.yml)
+This extension purges Cloudflare cache when updating pages or re-uploading images, with the primary aim of clearing image cache.
 
-[日本語](./README.md)
-
-Purge Cloudflare cache when updating MediaWiki images.
-
-[Use MediaWiki with Cloudflare – harugon's blog (Japanese)](https://blog.r9g.net/archives/121)
-
-It's recommended to read the blog above before installing this extension.
+It's recommended to read the page [Using CloudFlare with MediaWiki – harugon's blog](https://blog.r9g.net/archives/121) before installation.
 
 ## Requirements
-
 - PHP 7.4
 - MediaWiki 1.35
 
-## Installation
+## Install
 
-[Releases · harugon/mediawiki\-extensions\-cloudflare](https://github.com/harugon/mediawiki-extensions-cloudflare/releases)
+Download the file `Cloudflare-{version}.tar.gz` from the URL [Releases · harugon/mediawiki-extensions-cloudflare](https://github.com/harugon/mediawiki-extensions-cloudflare/releases) and extract it to the extensions directory.
 
-Download `Cloudflare-{version}.tar.gz` from the URL above and extract it to `extensions` directory.
-
-Add the following codes and Cloudflare's API information at the bottom of your `LocalSettings.php`:
+Add the following to LocalSettings.php along with your Cloudflare API information:
 
 ```php
 wfLoadExtension('Cloudflare');
@@ -30,7 +21,7 @@ $wgCloudflareAPIKey = '';
 $wgCloudflareZoneID = '';
 ```
 
-## Configuration
+## Config
 
 | Variable                 | Default value | Notes                                                                                                                   |
 | ------------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -39,18 +30,16 @@ $wgCloudflareZoneID = '';
 | `$wgCloudflareZoneID`    | `""`          | Site (URL) ID (You can get it from the dashboard of the site)                                                           |
 | `$wgCloudflarePurgePage` | `false`       | Purge cache when articles are updated                                                                                   |
 | `$wgCloudflarePurgeFile` | `true`        | Purge cache when files (images) are updated                                                                             |
+|
 
-### Caching article pages
+### Caching Article Pages
 
-When `$wgCloudflarePurgePage` is enabled, you need to set the the "Cache Level" of article page URLs in "Page Rule" to "Cache Everything".
+If enabling `$wgCloudflarePurgePage`, it's necessary to set a Page Rule of Bypass Cache on Cookie. (Only available on Business and Enterprise plans.)
 
-## What's next
+## Issues
 
 - API Rate limits
-- Purge article pages when using MobileFrontend
-- When Varnish is used as middleware (Cloudflare &rarr; Varnish &rarr; origin; is there any chance that Cloudflare will be left out?)
-- Is it suitable to use `$wgEventRelayerConfig['cdn-url-purges']`?
-- Work with guzzle
+- When Varnish is in place... (There's a possibility that Cloudflare may disappear first in the sequence Cloudflare->Varnish->origin?)
 
 ## Disclaimer
 

@@ -12,41 +12,40 @@
   ],
   "autoload": {
     "psr-4": {
-      "MediaWiki\\Extension\\Clouflare\\": "includes/",
-      "MediaWiki\\Extension\\Clouflare\\Tests\\": "tests/"
+      "MediaWiki\\Extension\\Clouflare\\": "includes/"
     }
   },
   "require": {
-    "php": ">=7.3",
-    "composer/installers": "^1.0",
-    "cloudflare/sdk": "^1.3"
+    "php": ">=7.4",
+    "composer/installers": "^2.0"
   },
   "require-dev": {
-    "mediawiki/mediawiki-codesniffer": "38.0.0",
+    "mediawiki/mediawiki-codesniffer": "41.0.0",
+    "mediawiki/mediawiki-phan-config": "0.12.1",
     "mediawiki/minus-x": "1.1.1",
-    "squizlabs/php_codesniffer": "3.*",
-    "ockcyp/covers-validator": "1.3.3",
-    "php-parallel-lint/php-console-highlighter": "0.5.0",
-    "php-parallel-lint/php-parallel-lint": "1.3.1",
-    "phpunit/phpunit": "^8.5"
+    "php-parallel-lint/php-console-highlighter": "1.0.0",
+    "php-parallel-lint/php-parallel-lint": "1.3.2"
   },
   "scripts": {
     "test": [
-      "parallel-lint . --exclude vendor",
-      "phpunit",
-      "covers-validator",
+      "parallel-lint . --exclude vendor --exclude node_modules",
       "@phpcs",
       "minus-x check ."
     ],
-    "cover": "phpunit --coverage-html coverage",
     "fix": [
       "minus-x fix .",
       "phpcbf"
     ],
-    "phpcs": "phpcs -sp"
+    "phan": "phan -d . --long-progress-bar",
+    "phpcs": "phpcs -sp --cache"
   },
   "bin-dir" : "/vendor/bin/",
   "extra": {
     "installer-name": "Cloudflare"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
   }
 }

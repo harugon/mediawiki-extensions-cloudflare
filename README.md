@@ -1,10 +1,9 @@
 # Cloudflare® - MediaWiki
 
-[![CI](https://github.com/harugon/mediawiki-extensions-cloudflare/actions/workflows/ci.yml/badge.svg)](https://github.com/harugon/mediawiki-extensions-cloudflare/actions/workflows/ci.yml)
-
 [English](./README.en.md)
 
-MediaWiki の画像　更新時に Cloudflare のキャッシュをパージします
+ページの更新、画像の再アップロード時に Cloudflare のキャッシュをパージします
+(主に画像のキャッシュを消すことを目的としています)
 
 [MediaWiki で CloudFlare を使う – harugon のブログ](https://blog.r9g.net/archives/121)
 
@@ -43,17 +42,15 @@ $wgCloudflareZoneID = '';
 
 ### 記事ページをキャッシュする
 
-`$wgCloudflarePurgePage`を有効化する場合 ページルール (Page Rule)　にて記事ページ URL に
-「キャッシュレベル (Cache Level)　-> すべてをキャッシュする( Cache Everything )」を指定する必要があります。
+`$wgCloudflarePurgePage`を有効化する場合 ページルール (Page Rule) に　Bypass Cache on Cookie　を設定する必要があります。
+(BusinessプランとEnterpriseプランのみ有効です。)
 
 ## 問題
 
 - API Rate limits
-- MobileFrontend 使用サイトでの記事ページの purge
-- Varnish を挟んでいる場合　‥（Cloudflare->Varnish->origin 先に Cf が消える可能性がある？）
-- $wgEventRelayerConfig['cdn-url-purges'] を使うと大げさ？
-- guzzle を使っている
+- Varnish を挟んでいる場合　‥（Cloudflare->Varnish->origin 先に Cloudflare が消える可能性がある？）
 
-## Disclosure
+
+## Disclaimer
 
 Cloudflare, the Cloudflare logo, and Cloudflare Workers are trademarks and/or registered trademarks of Cloudflare, Inc. in the United States and other jurisdictions.

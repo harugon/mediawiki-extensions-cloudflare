@@ -1,6 +1,6 @@
 {
 	"name": "Cloudflare",
-	"version": "0.1.3",
+	"version": "0.2.0",
 	"author": [
 		"harugon"
 	],
@@ -9,7 +9,7 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.35.0"
+		"MediaWiki": ">= 1.39.0"
 	},
 	"MessagesDirs": {
 		"Cloudflare": [
@@ -18,17 +18,6 @@
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Cloudflare\\": "includes/"
-	},
-	"load_composer_autoloader": true,
-	"HookHandlers": {
-		"main": {
-			"class": "MediaWiki\\Extension\\Cloudflare\\HookHandler",
-			"services": [ "MainConfig" ]
-		}
-	},
-	"Hooks": {
-		"LocalFilePurgeThumbnails": "main",
-		"TitleSquidURLs": "main"
 	},
 	"ConfigRegistry": {
 		"cloudflare": "GlobalVarConfig::newInstance"
@@ -60,5 +49,11 @@
 			"value": true
 		}
 	},
+	"ExtensionFunctions": [
+		"MediaWiki\\Extension\\Cloudflare\\Cloudflare::onExtensionFunction"
+	],
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
+	],
 	"manifest_version": 2
 }
