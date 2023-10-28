@@ -33,6 +33,8 @@ class EventRelayer extends \EventRelayer {
 				/** @var $event array['urls' => $url,'timestamp' => $ts] */
 				$url = $this->expandURL( $event['url'] );
 				$isFileURL = strpos( $url, $uploadPath ) !== false;
+                //@todo: PHP8 str_contains($url, $uploadPath);
+
 				if ( $isFileURL ) {
 					$files[] = $url;
 				} else {
@@ -44,9 +46,13 @@ class EventRelayer extends \EventRelayer {
 				$allUrls = array_merge( $articles, $files );
 				$this->cloudflareAPIRequester->cachePurge( $allUrls );
 			} elseif ( $this->config->get( 'CloudflarePurgePage' ) ) {
-				$this->cloudflareAPIRequester->cachePurge( $articles );
+                if ( count( $articles ) > 0){
+                    $this->cloudflareAPIRequester->cachePurge( $articles );
+                }
 			} elseif ( $this->config->get( 'CloudflarePurgeFile' ) ) {
-				$this->cloudflareAPIRequester->cachePurge( $files );
+                if ( count( $files ) > 0){
+                    $this->cloudflareAPIRequester->cachePurge( $files );
+                }
 			}
 
 		}

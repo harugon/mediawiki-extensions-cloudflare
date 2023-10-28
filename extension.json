@@ -16,6 +16,16 @@
 			"i18n"
 		]
 	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\Cloudflare\\HookHandler",
+			"services": [ "MainConfig","CloudflareAPIRequester"]
+		}
+	},
+	"Hooks": {
+		"UploadComplete": "main",
+		"PageSaveComplete":"main"
+	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Cloudflare\\": "includes/"
 	},
@@ -49,9 +59,6 @@
 			"value": true
 		}
 	},
-	"ExtensionFunctions": [
-		"MediaWiki\\Extension\\Cloudflare\\Cloudflare::onExtensionFunction"
-	],
 	"ServiceWiringFiles": [
 		"includes/ServiceWiring.php"
 	],
