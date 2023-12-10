@@ -23,8 +23,10 @@
 		}
 	},
 	"Hooks": {
-		"UploadComplete": "main",
-		"PageSaveComplete":"main"
+		"LocalFilePurgeThumbnails": "main",
+		"PageSaveComplete":"main",
+		"PageMoveComplete":"main",
+		"PageDeleteComplete":"main"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Cloudflare\\": "includes/"

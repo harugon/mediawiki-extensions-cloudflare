@@ -3,7 +3,7 @@
 namespace MediaWiki\Extension\Cloudflare;
 
 /**
-* "ExtensionFunctions": [
+ * "ExtensionFunctions": [
  * "MediaWiki\\Extension\\Cloudflare\\Cloudflare::onExtensionFunction"
  * ],
  */

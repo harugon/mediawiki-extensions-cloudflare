@@ -4,8 +4,8 @@ namespace MediaWiki\Extension\Cloudflare;
 
 use Config;
 use ManualLogEntry;
+use MediaWiki\Hook\LocalFilePurgeThumbnailsHook;
 use MediaWiki\Hook\PageMoveCompleteHook;
-use MediaWiki\Hook\UploadCompleteHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\Hook\PageDeleteCompleteHook;
 use MediaWiki\Page\ProperPageIdentity;
@@ -13,62 +13,85 @@ use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 
-class HookHandler implements PageSaveCompleteHook,PageDeleteCompleteHook,PageMoveCompleteHook,UploadCompleteHook
+/**
+ * Class HookHandler
+ *
+ * https://developers.cloudflare.com/cache/concepts/default-cache-behavior/
+ * historyページはキャッシュされないmax-age=0のため
+ *
+ */
+class HookHandler implements
+	PageSaveCompleteHook,
+	PageDeleteCompleteHook,
+    PageMoveCompleteHook,
+	LocalFilePurgeThumbnailsHook
 {
 
+	private CloudflareAPIRequester $cloudflareAPIRequester;
+	private Config $config;
 
-    private CloudflareAPIRequester $cloudflareAPIRequester;
-    private Config $config;
+	/**
+	 * @param Config $config
+	 * @param CloudflareAPIRequester $cloudflareAPIRequester
+	 */
+	public function __construct( Config $config, CloudflareAPIRequester $cloudflareAPIRequester ) {
+		$this->config = $config;
+		$this->cloudflareAPIRequester = $cloudflareAPIRequester;
+	}
 
-    public function __construct(Config $config, CloudflareAPIRequester $cloudflareAPIRequester){
-        $this->config = $config;
-        $this->cloudflareAPIRequester = $cloudflareAPIRequester;
-    }
-
-
-    public function onPageSaveComplete($wikiPage, $user, $summary, $flags, $revisionRecord, $editResult)
+	public function onPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ): void
     {
-        $url = $wikiPage->getTitle()->getFullURL();
-        if ( $this->config->get( 'CloudflarePurgePage' ) ) {
-                $this->cloudflareAPIRequester->cachePurge( [$url] );
-        }
-    }
+		if ( $this->config->get( 'CloudflarePurgePage' ) ) {
+			$url = $wikiPage->getTitle()->getFullURL();
+			$this->cloudflareAPIRequester->cachePurge( [ $url ] );
+		}
+	}
 
-    public function onUploadComplete($uploadBase)
+
+	public function onPageDeleteComplete( ProperPageIdentity $page, Authority $deleter, string $reason, int $pageID, RevisionRecord $deletedRev, ManualLogEntry $logEntry, int $archivedRevisionCount ): void
     {
-        $file = $uploadBase->getLocalFile()->getUrl();
-        $fileUrl = $this->expandURL( $file );
+		if ( $this->config->get( 'CloudflarePurgePage' ) ) {
+			$url = $page->getTitle()->getFullURL();
+			$this->cloudflareAPIRequester->cachePurge( [ $url ] );
+		}
+	}
 
-        //TODO: LocalFile::getThumbnails
-        //遅延させないと消えないかも
-        if ( $this->config->get( 'CloudflarePurgeFile' ) ) {
-                $this->cloudflareAPIRequester->cachePurge( [$fileUrl] );
-        }
-    }
-
-    public function onPageDeleteComplete(ProperPageIdentity $page, Authority $deleter, string $reason, int $pageID, RevisionRecord $deletedRev, ManualLogEntry $logEntry, int $archivedRevisionCount)
+	public function onPageMoveComplete( $old, $new, $user, $pageid, $redirid, $reason, $revision ): void
     {
+		if ( $this->config->get( 'CloudflarePurgePage' ) ) {
+			$oldUrl = $old->getTitle()->getFullURL();
+			$newUrl = $new->getTitle()->getFullURL();
+			$this->cloudflareAPIRequester->cachePurge( [ $oldUrl, $newUrl ] );
+		}
+	}
 
-    }
-
-    /**
-     *
-     * https://www.mediawiki.org/wiki/Manual:Hooks/PageMoveComplete
-     *
-     * @param $old
-     * @param $new
-     * @param $user
-     * @param $pageid
-     * @param $redirid
-     * @param $reason
-     * @param $revision
-     * @return void
-     */
-    public function onPageMoveComplete($old, $new, $user, $pageid, $redirid, $reason, $revision)
+	/**
+	 *
+	 */
+	public function onLocalFilePurgeThumbnails( $file, $archiveName, $urls ): void
     {
+		//サムネイルが生成されていない場合 $urls が空 GD,ImageMagicがインストールされていない場合など
+		//上書きアップロードの場合は、古い画像毎に呼び出される
+		if ( $this->config->get( 'CloudflarePurgeFile' ) ) {
+				$purgeURL = [];
+				$originalUrl = $file->getUrl();
+				$purgeURL[] = $this->expandURL( $originalUrl );
+				//オリジナル画像のURLを追加　アーカイブ画像の場合は削除する必要がないが判別方法がわからないので追加
 
-    }
-    private function expandURL( $url ): string {
-        return (string)MediaWikiServices::getInstance()->getUrlUtils()->expand( $url, PROTO_INTERNAL );
-    }
+				foreach ( $urls as $url ) {
+					$purgeURL[] = $this->expandURL( $url );
+				}
+				$this->cloudflareAPIRequester->cachePurge( $purgeURL );
+		}
+	}
+
+	/**
+	 * Expand a potentially local URL to a fully-qualified URL.
+	 * @param $url
+	 * @return string
+	 */
+	private function expandURL( $url ): string {
+		return (string)MediaWikiServices::getInstance()->getUrlUtils()->expand( $url, PROTO_INTERNAL );
+	}
+
 }
