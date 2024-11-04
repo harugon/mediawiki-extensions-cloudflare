@@ -12,7 +12,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "MediaWiki\\Extension\\Clouflare\\": "includes/"
+      "MediaWiki\\Extension\\Cloudflare\\": "includes/"
     }
   },
   "require": {
