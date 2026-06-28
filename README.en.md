@@ -5,8 +5,8 @@ This extension purges Cloudflare cache when updating pages or re-uploading image
 It's recommended to read the page [Using CloudFlare with MediaWiki – harugon's blog](https://blog.r9g.net/archives/121) before installation.
 
 ## Requirements
-- PHP 7.4
-- MediaWiki 1.35
+- PHP 8.0
+- MediaWiki 1.39
 
 ## Install
 

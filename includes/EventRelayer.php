@@ -44,7 +44,7 @@ class EventRelayer extends \EventRelayer {
 				if ( $url === null ) {
 					continue;
 				}
-				$isFileURL = strpos( $url, $uploadPath ) !== false;
+				$isFileURL = str_contains( $url, $uploadPath );
 
 				if ( $isFileURL ) {
 					$files[] = $url;
