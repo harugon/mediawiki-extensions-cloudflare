@@ -1,0 +1,80 @@
+name: PHPUnit
+
+on:
+  push:
+    paths:
+      - '**.php'
+      - '**.json'
+      - '.github/workflows/phpunit.yml'
+  pull_request:
+    paths:
+      - '**.php'
+      - '**.json'
+      - '.github/workflows/phpunit.yml'
+
+jobs:
+  phpunit:
+    name: MW ${{ matrix.mediawiki }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental || false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # MediaWiki 1.43 (LTS) is the minimum supported version.
+          - { mediawiki: 'REL1_43', php: '8.1' }
+          - { mediawiki: 'REL1_43', php: '8.2' }
+          - { mediawiki: 'REL1_43', php: '8.3' }
+          # Track the development branch, but don't fail the build on it.
+          - { mediawiki: 'master', php: '8.4', experimental: true }
+
+    steps:
+      - name: Checkout MediaWiki core
+        uses: actions/checkout@v4
+        with:
+          repository: wikimedia/mediawiki
+          ref: ${{ matrix.mediawiki }}
+          path: mediawiki
+
+      - name: Checkout extension
+        uses: actions/checkout@v4
+        with:
+          path: mediawiki/extensions/Cloudflare
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, intl, calendar, sqlite3, pdo_sqlite
+          tools: composer
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer
+          key: composer-${{ matrix.mediawiki }}-${{ matrix.php }}-${{ hashFiles('mediawiki/extensions/Cloudflare/composer.json') }}
+          restore-keys: |
+            composer-${{ matrix.mediawiki }}-${{ matrix.php }}-
+
+      - name: Install MediaWiki core dependencies
+        working-directory: mediawiki
+        run: composer install --no-progress --no-interaction --prefer-dist
+
+      - name: Install MediaWiki (SQLite)
+        working-directory: mediawiki
+        run: |
+          php maintenance/install.php \
+            --dbtype=sqlite \
+            --dbpath="$(pwd)/cache" \
+            --scriptpath="" \
+            --pass=AdminPassword1 \
+            CloudflareTestWiki Admin
+
+      - name: Enable the Cloudflare extension
+        working-directory: mediawiki
+        run: echo "wfLoadExtension( 'Cloudflare' );" >> LocalSettings.php
+
+      - name: Run PHPUnit
+        working-directory: mediawiki
+        run: composer phpunit:entrypoint -- extensions/Cloudflare/tests/phpunit

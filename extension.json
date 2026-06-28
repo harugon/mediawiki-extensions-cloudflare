@@ -35,6 +35,9 @@
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Cloudflare\\": "includes/"
 	},
+	"TestAutoloadNamespaces": {
+		"MediaWiki\\Extension\\Cloudflare\\Tests\\Unit\\": "tests/phpunit/unit/"
+	},
 	"ConfigRegistry": {
 		"cloudflare": "GlobalVarConfig::newInstance"
 	},
