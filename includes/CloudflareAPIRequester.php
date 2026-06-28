@@ -60,7 +60,7 @@ class CloudflareAPIRequester {
 		} elseif ( !empty( $email ) && !empty( $apiKey ) ) {
 			wfDeprecatedMsg(
 				'CloudflareEmail and CloudflareAPIKey are deprecated, use CloudflareAPIToken instead',
-				'0.3.0'
+				'0.4.0'
 			);
 			$headers['X-Auth-Email'] = $email;
 			$headers['X-Auth-Key'] = $apiKey;
