@@ -65,7 +65,7 @@ class HookHandler implements
 	 * @return void
 	 */
 	private function pagePurge( $page ) {
-		if ( $this->canPurge() ) {
+		if ( $this->canPurge() === true ) {
 			$title = $this->titleFactory->newFromPageIdentity( $page );
 			$url = $title->getFullURL();
 			$this->cloudflareAPIRequester->cachePurge( [ $url ] );
@@ -137,7 +137,7 @@ class HookHandler implements
 	 * @return void
 	 */
 	public function onPageMoveComplete( $old, $new, $user, $pageid, $redirid, $reason, $revision ): void {
-		if ( $this->canPurge() ) {
+		if ( $this->canPurge() === true ) {
 			$oldTitle = $this->titleFactory->newFromPageIdentity( $old );
 			$newTitle = $this->titleFactory->newFromPageIdentity( $new );
 			$oldUrl = $oldTitle->getFullURL();
