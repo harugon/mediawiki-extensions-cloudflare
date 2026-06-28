@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\Cloudflare;
 
 use Config;
-use File;
 use ManualLogEntry;
 use MediaWiki\Hook\LocalFilePurgeThumbnailsHook;
 use MediaWiki\Hook\PageMoveCompleteHook;
@@ -12,11 +11,8 @@ use MediaWiki\Page\Hook\PageDeleteCompleteHook;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
-use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Title\Title;
-use MediaWiki\User\UserIdentity;
-use WikiPage;
 
 /**
  * Class HookHandler
@@ -59,6 +55,7 @@ class HookHandler implements
 	 * Purge a page's URL from Cloudflare cache.
 	 *
 	 * @param ProperPageIdentity $page
+	 * @return void
 	 */
 	private function pagePurge( $page ) {
 		if ( $this->canPurge() ) {
@@ -71,12 +68,13 @@ class HookHandler implements
 	/**
 	 * Purge modified page from Cloudflare cache after save.
 	 *
-	 * @param WikiPage $wikiPage
-	 * @param UserIdentity $user
+	 * @param \WikiPage $wikiPage
+	 * @param \MediaWiki\User\UserIdentity $user
 	 * @param string $summary
 	 * @param int $flags
 	 * @param RevisionRecord $revisionRecord
-	 * @param EditResult $editResult
+	 * @param \MediaWiki\Storage\EditResult $editResult
+	 * @return void
 	 */
 	public function onPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ): void {
 		$this->pagePurge( $wikiPage );
@@ -85,7 +83,8 @@ class HookHandler implements
 	/**
 	 * Purge page from Cloudflare cache on "action=purge".
 	 *
-	 * @param WikiPage $wikiPage
+	 * @param \WikiPage $wikiPage
+	 * @return void
 	 */
 	public function onArticlePurge( $wikiPage ) {
 		$this->pagePurge( $wikiPage );
@@ -101,6 +100,7 @@ class HookHandler implements
 	 * @param RevisionRecord $deletedRev
 	 * @param ManualLogEntry $logEntry
 	 * @param int $archivedRevisionCount
+	 * @return void
 	 */
 	public function onPageDeleteComplete(
 		ProperPageIdentity $page,
@@ -119,11 +119,12 @@ class HookHandler implements
 	 *
 	 * @param ProperPageIdentity $old
 	 * @param ProperPageIdentity $new
-	 * @param UserIdentity $user
+	 * @param \MediaWiki\User\UserIdentity $user
 	 * @param int $pageid
 	 * @param int $redirid
 	 * @param string $reason
 	 * @param RevisionRecord $revision
+	 * @return void
 	 */
 	public function onPageMoveComplete( $old, $new, $user, $pageid, $redirid, $reason, $revision ): void {
 		if ( $this->canPurge() ) {
@@ -138,30 +139,31 @@ class HookHandler implements
 	/**
 	 * Purge local file and thumbnail URLs from Cloudflare cache.
 	 *
-	 * @param File $file
+	 * @param \File $file
 	 * @param string|false $archiveName Name of an old file version or false if current
 	 * @param string[] $urls Thumbnail URLs to purge
+	 * @return void
 	 */
 	public function onLocalFilePurgeThumbnails( $file, $archiveName, $urls ): void {
 		// サムネイルが生成されていない場合 $urls が空 GD,ImageMagicがインストールされていない場合など
 		//上書きアップロードの場合は、古い画像毎に呼び出される
 		if ( $this->config->get( 'CloudflarePurgeFile' ) ) {
-				$purgeURL = [];
+				$purgeUrl = [];
 				$originalUrl = $file->getUrl();
 				$expandedOriginal = $this->expandURL( $originalUrl );
 				if ( $expandedOriginal !== null ) {
-					$purgeURL[] = $expandedOriginal;
+					$purgeUrl[] = $expandedOriginal;
 				}
 				// オリジナル画像のURLを追加　アーカイブ画像の場合は削除する必要がないが判別方法がわからないので追加
 
 				foreach ( $urls as $url ) {
 					$expandedUrl = $this->expandURL( $url );
 					if ( $expandedUrl !== null ) {
-						$purgeURL[] = $expandedUrl;
+						$purgeUrl[] = $expandedUrl;
 					}
 				}
-				if ( count( $purgeURL ) > 0 ) {
-					$this->cloudflareAPIRequester->cachePurge( $purgeURL );
+				if ( count( $purgeUrl ) > 0 ) {
+					$this->cloudflareAPIRequester->cachePurge( $purgeUrl );
 				}
 		}
 	}

@@ -30,7 +30,7 @@ class EventRelayer extends \EventRelayer {
 	 * @param string $channel
 	 * @param array $events List of event data maps
 	 * @return bool Success
-	 * @throws Exception
+	 * @throws Exception If Cloudflare configuration values are missing
 	 */
 	protected function doNotify( $channel, array $events ): bool {
 		if ( $channel === 'cdn-url-purges' ) {
@@ -44,9 +44,9 @@ class EventRelayer extends \EventRelayer {
 				if ( $url === null ) {
 					continue;
 				}
-				$isFileURL = str_contains( $url, $uploadPath );
+				$isFileUrl = str_contains( $url, $uploadPath );
 
-				if ( $isFileURL ) {
+				if ( $isFileUrl ) {
 					$files[] = $url;
 				} else {
 					$articles[] = $url;

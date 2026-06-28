@@ -39,14 +39,15 @@ class CloudflareAPIRequester {
 	 * if it is the default port (80 for http, 443 for https), but must be included otherwise.
 	 *
 	 * @param array $urls 削除するURLの配列 max 30
-	 * @throws Exception
+	 * @return void
+	 * @throws Exception If required configuration values are missing
 	 */
 	public function cachePurge( $urls ): void {
 		$apiToken = $this->config->get( 'CloudflareAPIToken' );
-		$zoneID = $this->config->get( 'CloudflareZoneID' );
+		$zoneId = $this->config->get( 'CloudflareZoneID' );
 
 		// Check if the necessary configuration values are set
-		if ( !$apiToken || !$zoneID ) {
+		if ( !$apiToken || !$zoneId ) {
 			throw new Exception( 'Cloudflare configuration values are missing' );
 		}
 
@@ -54,7 +55,7 @@ class CloudflareAPIRequester {
 		 * Cloudflare API Documentation
 		 * https://developers.cloudflare.com/api/operations/zone-purge#purge-cached-content-by-url
 		 */
-		$endpoint = "https://api.cloudflare.com/client/v4/zones/{$zoneID}/purge_cache";
+		$endpoint = "https://api.cloudflare.com/client/v4/zones/{$zoneId}/purge_cache";
 		$headers = [
 			'Authorization' => 'Bearer ' . $apiToken,
 			'Content-Type' => 'application/json',
