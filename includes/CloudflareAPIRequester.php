@@ -6,6 +6,7 @@ use Config;
 use GuzzleHttp\Exception\RequestException;
 use MediaWiki\Http\HttpRequestFactory;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 class CloudflareAPIRequester {
 
@@ -40,7 +41,7 @@ class CloudflareAPIRequester {
 	 *
 	 * @param array $urls 削除するURLの配列 max 30
 	 * @return void
-	 * @throws Exception If required configuration values are missing
+	 * @throws RuntimeException If required configuration values are missing
 	 */
 	public function cachePurge( $urls ): void {
 		$apiToken = $this->config->get( 'CloudflareAPIToken' );
@@ -49,7 +50,7 @@ class CloudflareAPIRequester {
 		$zoneId = $this->config->get( 'CloudflareZoneID' );
 
 		if ( empty( $zoneId ) ) {
-			throw new Exception( 'Cloudflare configuration values are missing' );
+			throw new RuntimeException( 'Cloudflare configuration values are missing' );
 		}
 
 		$headers = [ 'Content-Type' => 'application/json' ];
@@ -64,7 +65,7 @@ class CloudflareAPIRequester {
 			$headers['X-Auth-Email'] = $email;
 			$headers['X-Auth-Key'] = $apiKey;
 		} else {
-			throw new Exception( 'Cloudflare configuration values are missing' );
+			throw new RuntimeException( 'Cloudflare configuration values are missing' );
 		}
 
 		/**

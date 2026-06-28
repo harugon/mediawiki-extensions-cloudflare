@@ -3,6 +3,7 @@ namespace MediaWiki\Extension\Cloudflare;
 
 use MediaWiki\Config\Config;
 use MediaWiki\MediaWikiServices;
+use RuntimeException;
 
 class EventRelayer extends \EventRelayer {
 	use UrlExpander;
@@ -30,7 +31,7 @@ class EventRelayer extends \EventRelayer {
 	 * @param string $channel
 	 * @param array $events List of event data maps
 	 * @return bool Success
-	 * @throws Exception If Cloudflare configuration values are missing
+	 * @throws RuntimeException If Cloudflare configuration values are missing
 	 */
 	protected function doNotify( $channel, array $events ): bool {
 		if ( $channel === 'cdn-url-purges' ) {

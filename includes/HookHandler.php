@@ -75,7 +75,6 @@ class HookHandler implements
 	/**
 	 * Purge modified page from Cloudflare cache after save.
 	 *
-	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 * @param \WikiPage $wikiPage
 	 * @param \MediaWiki\User\UserIdentity $user
 	 * @param string $summary
@@ -101,7 +100,6 @@ class HookHandler implements
 	/**
 	 * Purge deleted page's URL from Cloudflare cache.
 	 *
-	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 * @param ProperPageIdentity $page
 	 * @param Authority $deleter
 	 * @param string $reason
@@ -126,7 +124,6 @@ class HookHandler implements
 	/**
 	 * Purge old and new page URLs from Cloudflare cache after a page move.
 	 *
-	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 * @param ProperPageIdentity $old
 	 * @param ProperPageIdentity $new
 	 * @param \MediaWiki\User\UserIdentity $user
@@ -149,7 +146,6 @@ class HookHandler implements
 	/**
 	 * Purge local file and thumbnail URLs from Cloudflare cache.
 	 *
-	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 * @param \File $file
 	 * @param string|false $archiveName Name of an old file version or false if current
 	 * @param string[] $urls Thumbnail URLs to purge
