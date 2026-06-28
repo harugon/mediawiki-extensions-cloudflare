@@ -33,7 +33,7 @@ $wgCloudflareZoneID = '';
 
 | 変数                   | 初期値 | 説明                                                                                                                 |
 | ---------------------- | ------ | -------------------------------------------------------------------------------------------------------------------- |
-| $wgCloudflareAPIToken    | ""     | API Tlekn（ [API トークン- Cloudflare](https://dash.cloudflare.com/profile/api-tokens)　 → Global API Key が必要です ） |
+| $wgCloudflareAPIToken    | ""     | API Token（ [API トークン- Cloudflare](https://dash.cloudflare.com/profile/api-tokens) で作成したトークンを設定します ） |
 | $wgCloudflareZoneID    | ""     | サイト（URL）固有の ID （サイトごとのダッシュボードで見ることができます）                                            |
 | $wgCloudflarePurgePage | false  | 記事を更新時に purge する                                                                                            |
 | $wgCloudflarePurgeFile | true   | ファイル（画像）を更新時に purge する                                                                                |

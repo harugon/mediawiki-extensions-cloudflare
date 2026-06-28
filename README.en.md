@@ -24,7 +24,7 @@ $wgCloudflareZoneID = '';
 
 | Variable                 | Default value | Notes                                                                                                                   |
 | ------------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `$wgCloudflareAPIToken`    | `""`          | API token ([API token - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) &rarr; Your global API key is needed) |
+| `$wgCloudflareAPIToken`    | `""`          | API token (create one at [API Tokens - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) with Cache Purge permission) |
 | `$wgCloudflareZoneID`    | `""`          | Site (URL) ID (You can get it from the dashboard of the site)                                                           |
 | `$wgCloudflarePurgePage` | `false`       | Purge cache when articles are updated                                                                                   |
 | `$wgCloudflarePurgeFile` | `true`        | Purge cache when files (images) are updated                                                                             |
