@@ -16,8 +16,7 @@ Add the following to LocalSettings.php along with your Cloudflare API informatio
 
 ```php
 wfLoadExtension('Cloudflare');
-$wgCloudflareEmail = '';
-$wgCloudflareAPIKey = '';
+$wgCloudflareAPIToken = '';
 $wgCloudflareZoneID = '';
 ```
 
@@ -25,8 +24,7 @@ $wgCloudflareZoneID = '';
 
 | Variable                 | Default value | Notes                                                                                                                   |
 | ------------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `$wgCloudflareEmail`     | `""`          | Your email used for logging in Cloudflare                                                                               |
-| `$wgCloudflareAPIKey`    | `""`          | API key ([API token - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) &rarr; Your global API key is needed) |
+| `$wgCloudflareAPIToken`    | `""`          | API token ([API token - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) &rarr; Your global API key is needed) |
 | `$wgCloudflareZoneID`    | `""`          | Site (URL) ID (You can get it from the dashboard of the site)                                                           |
 | `$wgCloudflarePurgePage` | `false`       | Purge cache when articles are updated                                                                                   |
 | `$wgCloudflarePurgeFile` | `true`        | Purge cache when files (images) are updated                                                                             |

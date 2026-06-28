@@ -1,16 +1,23 @@
 <?php
 namespace MediaWiki\Extension\Cloudflare;
 
+use MediaWiki\Config\Config;
 use MediaWiki\MediaWikiServices;
 
 class EventRelayer extends \EventRelayer {
+	use UrlExpander;
 
 	/**
 	 * @var CloudflareAPIRequester
 	 */
 	private $cloudflareAPIRequester;
+
+	/** @var Config */
 	private $config;
 
+	/**
+	 * @param array $params
+	 */
 	public function __construct( array $params ) {
 		parent::__construct( $params );
 		$this->cloudflareAPIRequester = MediaWikiServices::getInstance()->getService( 'CloudflareAPIRequester' );
@@ -18,10 +25,12 @@ class EventRelayer extends \EventRelayer {
 	}
 
 	/**
+	 * Relay CDN URL purge events to Cloudflare API.
+	 *
 	 * @param string $channel
 	 * @param array $events List of event data maps
 	 * @return bool Success
-	 * @throws \MWException
+	 * @throws Exception
 	 */
 	protected function doNotify( $channel, array $events ): bool {
 		if ( $channel === 'cdn-url-purges' ) {
@@ -30,10 +39,12 @@ class EventRelayer extends \EventRelayer {
 			$files = [];
 			$articles = [];
 			foreach ( $events as $event ) {
-				/** @var $event array['urls' => $url,'timestamp' => $ts] */
-				$url = $this->expandURL( $event['url'] );
-				$isFileURL = strpos( $url, $uploadPath ) !== false;
-				// @todo: PHP8 str_contains($url, $uploadPath);
+				/** @var array{urls: string|null, timestamp: int} $event */
+				$url = $this->expandURL( $event['url'] ?? null );
+				if ( $url === null ) {
+					continue;
+				}
+				$isFileURL = str_contains( $url, $uploadPath );
 
 				if ( $isFileURL ) {
 					$files[] = $url;
@@ -57,9 +68,5 @@ class EventRelayer extends \EventRelayer {
 
 		}
 		return true;
-	}
-
-	private function expandURL( $url ): string {
-		return (string)MediaWikiServices::getInstance()->getUrlUtils()->expand( $url, PROTO_INTERNAL );
 	}
 }

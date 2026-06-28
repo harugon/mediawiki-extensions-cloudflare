@@ -3,15 +3,19 @@
 namespace MediaWiki\Extension\Cloudflare;
 
 use Config;
+use File;
 use ManualLogEntry;
 use MediaWiki\Hook\LocalFilePurgeThumbnailsHook;
 use MediaWiki\Hook\PageMoveCompleteHook;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\Hook\ArticlePurgeHook;
 use MediaWiki\Page\Hook\PageDeleteCompleteHook;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
+use MediaWiki\User\UserIdentity;
+use WikiPage;
 
 /**
  * Class HookHandler
@@ -21,11 +25,13 @@ use MediaWiki\Storage\Hook\PageSaveCompleteHook;
  *
  */
 class HookHandler implements
-	PageSaveCompleteHook,
+	ArticlePurgeHook,
+	LocalFilePurgeThumbnailsHook,
 	PageDeleteCompleteHook,
-    PageMoveCompleteHook,
-	LocalFilePurgeThumbnailsHook
+	PageMoveCompleteHook,
+	PageSaveCompleteHook
 {
+	use UrlExpander;
 
 	private CloudflareAPIRequester $cloudflareAPIRequester;
 	private Config $config;
@@ -39,26 +45,86 @@ class HookHandler implements
 		$this->cloudflareAPIRequester = $cloudflareAPIRequester;
 	}
 
-	public function onPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ): void
-    {
-		if ( $this->config->get( 'CloudflarePurgePage' ) ) {
-			$url = $wikiPage->getTitle()->getFullURL();
-			$this->cloudflareAPIRequester->cachePurge( [ $url ] );
-		}
+	/**
+	 * Check whether Cloudflare cache purging is enabled for pages.
+	 *
+	 * @return bool
+	 */
+	private function canPurge(): bool {
+		return $this->config->get( 'CloudflarePurgePage' );
 	}
 
-
-	public function onPageDeleteComplete( ProperPageIdentity $page, Authority $deleter, string $reason, int $pageID, RevisionRecord $deletedRev, ManualLogEntry $logEntry, int $archivedRevisionCount ): void
-    {
-		if ( $this->config->get( 'CloudflarePurgePage' ) ) {
+	/**
+	 * Purge a page's URL from Cloudflare cache.
+	 *
+	 * @param WikiPage $page
+	 */
+	private function pagePurge( $page ) {
+		if ( $this->canPurge() ) {
 			$url = $page->getTitle()->getFullURL();
 			$this->cloudflareAPIRequester->cachePurge( [ $url ] );
 		}
 	}
 
-	public function onPageMoveComplete( $old, $new, $user, $pageid, $redirid, $reason, $revision ): void
-    {
-		if ( $this->config->get( 'CloudflarePurgePage' ) ) {
+	/**
+	 * Purge modified page from Cloudflare cache after save.
+	 *
+	 * @param WikiPage $wikiPage
+	 * @param UserIdentity $user
+	 * @param string $summary
+	 * @param int $flags
+	 * @param RevisionRecord $revisionRecord
+	 * @param EditResult $editResult
+	 */
+	public function onPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ): void {
+		$this->pagePurge( $wikiPage );
+	}
+
+	/**
+	 * Purge page from Cloudflare cache on "action=purge".
+	 *
+	 * @param WikiPage $wikiPage
+	 */
+	public function onArticlePurge( $wikiPage ) {
+		$this->pagePurge( $wikiPage );
+	}
+
+	/**
+	 * Purge deleted page's URL from Cloudflare cache.
+	 *
+	 * @param ProperPageIdentity $page
+	 * @param Authority $deleter
+	 * @param string $reason
+	 * @param int $pageID
+	 * @param RevisionRecord $deletedRev
+	 * @param ManualLogEntry $logEntry
+	 * @param int $archivedRevisionCount
+	 */
+	public function onPageDeleteComplete(
+		ProperPageIdentity $page,
+		Authority $deleter,
+		string $reason,
+		int $pageID,
+		RevisionRecord $deletedRev,
+		ManualLogEntry $logEntry,
+		int $archivedRevisionCount
+	): void {
+		$this->pagePurge( $page );
+	}
+
+	/**
+	 * Purge old and new page URLs from Cloudflare cache after a page move.
+	 *
+	 * @param WikiPage $old
+	 * @param WikiPage $new
+	 * @param UserIdentity $user
+	 * @param int $pageid
+	 * @param int $redirid
+	 * @param string $reason
+	 * @param RevisionRecord $revision
+	 */
+	public function onPageMoveComplete( $old, $new, $user, $pageid, $redirid, $reason, $revision ): void {
+		if ( $this->canPurge() ) {
 			$oldUrl = $old->getTitle()->getFullURL();
 			$newUrl = $new->getTitle()->getFullURL();
 			$this->cloudflareAPIRequester->cachePurge( [ $oldUrl, $newUrl ] );
@@ -66,17 +132,20 @@ class HookHandler implements
 	}
 
 	/**
+	 * Purge local file and thumbnail URLs from Cloudflare cache.
 	 *
+	 * @param File $file
+	 * @param string|false $archiveName Name of an old file version or false if current
+	 * @param string[] $urls Thumbnail URLs to purge
 	 */
-	public function onLocalFilePurgeThumbnails( $file, $archiveName, $urls ): void
-    {
-		//サムネイルが生成されていない場合 $urls が空 GD,ImageMagicがインストールされていない場合など
+	public function onLocalFilePurgeThumbnails( $file, $archiveName, $urls ): void {
+		// サムネイルが生成されていない場合 $urls が空 GD,ImageMagicがインストールされていない場合など
 		//上書きアップロードの場合は、古い画像毎に呼び出される
 		if ( $this->config->get( 'CloudflarePurgeFile' ) ) {
 				$purgeURL = [];
 				$originalUrl = $file->getUrl();
 				$purgeURL[] = $this->expandURL( $originalUrl );
-				//オリジナル画像のURLを追加　アーカイブ画像の場合は削除する必要がないが判別方法がわからないので追加
+				// オリジナル画像のURLを追加　アーカイブ画像の場合は削除する必要がないが判別方法がわからないので追加
 
 				foreach ( $urls as $url ) {
 					$purgeURL[] = $this->expandURL( $url );
@@ -84,14 +153,4 @@ class HookHandler implements
 				$this->cloudflareAPIRequester->cachePurge( $purgeURL );
 		}
 	}
-
-	/**
-	 * Expand a potentially local URL to a fully-qualified URL.
-	 * @param $url
-	 * @return string
-	 */
-	private function expandURL( $url ): string {
-		return (string)MediaWikiServices::getInstance()->getUrlUtils()->expand( $url, PROTO_INTERNAL );
-	}
-
 }

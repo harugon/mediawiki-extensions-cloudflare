@@ -26,7 +26,8 @@
 		"LocalFilePurgeThumbnails": "main",
 		"PageSaveComplete":"main",
 		"PageMoveComplete":"main",
-		"PageDeleteComplete":"main"
+		"PageDeleteComplete":"main",
+		"ArticlePurge": "main"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Cloudflare\\": "includes/"
@@ -35,18 +36,13 @@
 		"cloudflare": "GlobalVarConfig::newInstance"
 	},
 	"config": {
-		"CloudflareEmail": {
-			"description": "Cloudflare Email",
-			"public": false,
-			"value": false
-		},
-		"CloudflareAPIKey": {
-			"description": "Cloudflare APIKey",
+		"CloudflareAPIToken": {
+			"description": "Cloudflare API Token",
 			"public": false,
 			"value": false
 		},
 		"CloudflareZoneID": {
-			"description": "Cloudflare Zon ID",
+			"description": "Cloudflare Zone ID",
 			"public": false,
 			"value": false
 		},
