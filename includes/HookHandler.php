@@ -12,7 +12,7 @@ use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
-use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
 
 /**
  * Class HookHandler
@@ -32,14 +32,21 @@ class HookHandler implements
 
 	private CloudflareAPIRequester $cloudflareAPIRequester;
 	private Config $config;
+	private TitleFactory $titleFactory;
 
 	/**
 	 * @param Config $config
 	 * @param CloudflareAPIRequester $cloudflareAPIRequester
+	 * @param TitleFactory $titleFactory
 	 */
-	public function __construct( Config $config, CloudflareAPIRequester $cloudflareAPIRequester ) {
+	public function __construct(
+		Config $config,
+		CloudflareAPIRequester $cloudflareAPIRequester,
+		TitleFactory $titleFactory
+	) {
 		$this->config = $config;
 		$this->cloudflareAPIRequester = $cloudflareAPIRequester;
+		$this->titleFactory = $titleFactory;
 	}
 
 	/**
@@ -59,7 +66,7 @@ class HookHandler implements
 	 */
 	private function pagePurge( $page ) {
 		if ( $this->canPurge() ) {
-			$title = Title::newFromPageIdentity( $page );
+			$title = $this->titleFactory->newFromPageIdentity( $page );
 			$url = $title->getFullURL();
 			$this->cloudflareAPIRequester->cachePurge( [ $url ] );
 		}
@@ -128,8 +135,8 @@ class HookHandler implements
 	 */
 	public function onPageMoveComplete( $old, $new, $user, $pageid, $redirid, $reason, $revision ): void {
 		if ( $this->canPurge() ) {
-			$oldTitle = Title::newFromPageIdentity( $old );
-			$newTitle = Title::newFromPageIdentity( $new );
+			$oldTitle = $this->titleFactory->newFromPageIdentity( $old );
+			$newTitle = $this->titleFactory->newFromPageIdentity( $new );
 			$oldUrl = $oldTitle->getFullURL();
 			$newUrl = $newTitle->getFullURL();
 			$this->cloudflareAPIRequester->cachePurge( [ $oldUrl, $newUrl ] );

@@ -22,7 +22,7 @@
 	"HookHandlers": {
 		"main": {
 			"class": "MediaWiki\\Extension\\Cloudflare\\HookHandler",
-			"services": [ "MainConfig","CloudflareAPIRequester"]
+			"services": [ "MainConfig","CloudflareAPIRequester","TitleFactory"]
 		}
 	},
 	"Hooks": {
