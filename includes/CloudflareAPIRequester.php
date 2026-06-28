@@ -72,10 +72,6 @@ class CloudflareAPIRequester {
 		 * https://developers.cloudflare.com/api/operations/zone-purge#purge-cached-content-by-url
 		 */
 		$endpoint = "https://api.cloudflare.com/client/v4/zones/{$zoneId}/purge_cache";
-		$headers = [
-			'Authorization' => 'Bearer ' . $apiToken,
-			'Content-Type' => 'application/json',
-		];
 		$body = [
 			'files' => $urls,
 		];
