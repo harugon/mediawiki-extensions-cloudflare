@@ -12,7 +12,7 @@
 ## Requirements
 
 - PHP 8.0
-- MediaWiki 1.39
+- MediaWiki 1.43
 
 ## Install
 
@@ -33,7 +33,7 @@ $wgCloudflareZoneID = '';
 
 | 変数                   | 初期値 | 説明                                                                                                                 |
 | ---------------------- | ------ | -------------------------------------------------------------------------------------------------------------------- |
-| $wgCloudflareAPIToken    | ""     | API Token（ [API トークン- Cloudflare](https://dash.cloudflare.com/profile/api-tokens) で作成したトークンを設定します ） |
+| $wgCloudflareAPIToken    | ""     | API Tlekn（ [API トークン- Cloudflare](https://dash.cloudflare.com/profile/api-tokens)　 → Global API Key が必要です ） |
 | $wgCloudflareZoneID    | ""     | サイト（URL）固有の ID （サイトごとのダッシュボードで見ることができます）                                            |
 | $wgCloudflarePurgePage | false  | 記事を更新時に purge する                                                                                            |
 | $wgCloudflarePurgeFile | true   | ファイル（画像）を更新時に purge する                                                                                |

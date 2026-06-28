@@ -6,7 +6,7 @@ It's recommended to read the page [Using CloudFlare with MediaWiki – harugon's
 
 ## Requirements
 - PHP 8.0
-- MediaWiki 1.39
+- MediaWiki 1.43
 
 ## Install
 
@@ -24,7 +24,7 @@ $wgCloudflareZoneID = '';
 
 | Variable                 | Default value | Notes                                                                                                                   |
 | ------------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `$wgCloudflareAPIToken`    | `""`          | API token (create one at [API Tokens - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) with Cache Purge permission) |
+| `$wgCloudflareAPIToken`    | `""`          | API token ([API token - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) &rarr; Your global API key is needed) |
 | `$wgCloudflareZoneID`    | `""`          | Site (URL) ID (You can get it from the dashboard of the site)                                                           |
 | `$wgCloudflarePurgePage` | `false`       | Purge cache when articles are updated                                                                                   |
 | `$wgCloudflarePurgeFile` | `true`        | Purge cache when files (images) are updated                                                                             |
