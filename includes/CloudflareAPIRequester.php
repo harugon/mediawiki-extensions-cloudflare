@@ -46,7 +46,7 @@ class CloudflareAPIRequester {
 		$zoneID = $this->config->get( 'CloudflareZoneID' );
 
 		// Check if the necessary configuration values are set
-		if ( $apiToken == "" || $zoneID == "" ) {
+		if ( !$apiToken || !$zoneID ) {
 			throw new Exception( 'Cloudflare configuration values are missing' );
 		}
 

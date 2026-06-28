@@ -57,11 +57,12 @@ class HookHandler implements
 	/**
 	 * Purge a page's URL from Cloudflare cache.
 	 *
-	 * @param WikiPage $page
+	 * @param ProperPageIdentity $page
 	 */
 	private function pagePurge( $page ) {
 		if ( $this->canPurge() ) {
-			$url = $page->getTitle()->getFullURL();
+			$title = \Title::newFromPageIdentity( $page );
+			$url = $title->getFullURL();
 			$this->cloudflareAPIRequester->cachePurge( [ $url ] );
 		}
 	}
@@ -115,8 +116,8 @@ class HookHandler implements
 	/**
 	 * Purge old and new page URLs from Cloudflare cache after a page move.
 	 *
-	 * @param WikiPage $old
-	 * @param WikiPage $new
+	 * @param ProperPageIdentity $old
+	 * @param ProperPageIdentity $new
 	 * @param UserIdentity $user
 	 * @param int $pageid
 	 * @param int $redirid
@@ -125,8 +126,10 @@ class HookHandler implements
 	 */
 	public function onPageMoveComplete( $old, $new, $user, $pageid, $redirid, $reason, $revision ): void {
 		if ( $this->canPurge() ) {
-			$oldUrl = $old->getTitle()->getFullURL();
-			$newUrl = $new->getTitle()->getFullURL();
+			$oldTitle = \Title::newFromPageIdentity( $old );
+			$newTitle = \Title::newFromPageIdentity( $new );
+			$oldUrl = $oldTitle->getFullURL();
+			$newUrl = $newTitle->getFullURL();
 			$this->cloudflareAPIRequester->cachePurge( [ $oldUrl, $newUrl ] );
 		}
 	}
@@ -144,13 +147,21 @@ class HookHandler implements
 		if ( $this->config->get( 'CloudflarePurgeFile' ) ) {
 				$purgeURL = [];
 				$originalUrl = $file->getUrl();
-				$purgeURL[] = $this->expandURL( $originalUrl );
+				$expandedOriginal = $this->expandURL( $originalUrl );
+				if ( $expandedOriginal !== null ) {
+					$purgeURL[] = $expandedOriginal;
+				}
 				// オリジナル画像のURLを追加　アーカイブ画像の場合は削除する必要がないが判別方法がわからないので追加
 
 				foreach ( $urls as $url ) {
-					$purgeURL[] = $this->expandURL( $url );
+					$expandedUrl = $this->expandURL( $url );
+					if ( $expandedUrl !== null ) {
+						$purgeURL[] = $expandedUrl;
+					}
 				}
-				$this->cloudflareAPIRequester->cachePurge( $purgeURL );
+				if ( count( $purgeURL ) > 0 ) {
+					$this->cloudflareAPIRequester->cachePurge( $purgeURL );
+				}
 		}
 	}
 }

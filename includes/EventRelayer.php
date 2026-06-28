@@ -39,7 +39,7 @@ class EventRelayer extends \EventRelayer {
 			$files = [];
 			$articles = [];
 			foreach ( $events as $event ) {
-				/** @var array{urls: string|null, timestamp: int} $event */
+				/** @var array{url: string|null, timestamp: int} $event */
 				$url = $this->expandURL( $event['url'] ?? null );
 				if ( $url === null ) {
 					continue;
