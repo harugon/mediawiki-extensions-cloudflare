@@ -14,6 +14,7 @@ use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\Storage\Hook\PageSaveCompleteHook;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use WikiPage;
 
@@ -61,7 +62,7 @@ class HookHandler implements
 	 */
 	private function pagePurge( $page ) {
 		if ( $this->canPurge() ) {
-			$title = \Title::newFromPageIdentity( $page );
+			$title = Title::newFromPageIdentity( $page );
 			$url = $title->getFullURL();
 			$this->cloudflareAPIRequester->cachePurge( [ $url ] );
 		}
@@ -126,8 +127,8 @@ class HookHandler implements
 	 */
 	public function onPageMoveComplete( $old, $new, $user, $pageid, $redirid, $reason, $revision ): void {
 		if ( $this->canPurge() ) {
-			$oldTitle = \Title::newFromPageIdentity( $old );
-			$newTitle = \Title::newFromPageIdentity( $new );
+			$oldTitle = Title::newFromPageIdentity( $old );
+			$newTitle = Title::newFromPageIdentity( $new );
 			$oldUrl = $oldTitle->getFullURL();
 			$newUrl = $newTitle->getFullURL();
 			$this->cloudflareAPIRequester->cachePurge( [ $oldUrl, $newUrl ] );
