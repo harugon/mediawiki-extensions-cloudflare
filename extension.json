@@ -1,6 +1,6 @@
 {
 	"name": "Cloudflare",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"author": [
 		"harugon"
 	],
@@ -9,7 +9,10 @@
 	"license-name": "MIT",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.43.0",
+		"platform": {
+			"php": ">= 8.0"
+		}
 	},
 	"MessagesDirs": {
 		"Cloudflare": [
@@ -19,14 +22,15 @@
 	"HookHandlers": {
 		"main": {
 			"class": "MediaWiki\\Extension\\Cloudflare\\HookHandler",
-			"services": [ "MainConfig","CloudflareAPIRequester"]
+			"services": [ "MainConfig","CloudflareAPIRequester","TitleFactory"]
 		}
 	},
 	"Hooks": {
 		"LocalFilePurgeThumbnails": "main",
 		"PageSaveComplete":"main",
 		"PageMoveComplete":"main",
-		"PageDeleteComplete":"main"
+		"PageDeleteComplete":"main",
+		"ArticlePurge": "main"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Cloudflare\\": "includes/"
@@ -35,18 +39,23 @@
 		"cloudflare": "GlobalVarConfig::newInstance"
 	},
 	"config": {
+		"CloudflareAPIToken": {
+			"description": "Cloudflare API Token (preferred)",
+			"public": false,
+			"value": false
+		},
 		"CloudflareEmail": {
-			"description": "Cloudflare Email",
+			"description": "DEPRECATED: Cloudflare Email. Use CloudflareAPIToken instead.",
 			"public": false,
 			"value": false
 		},
 		"CloudflareAPIKey": {
-			"description": "Cloudflare APIKey",
+			"description": "DEPRECATED: Cloudflare API Key. Use CloudflareAPIToken instead.",
 			"public": false,
 			"value": false
 		},
 		"CloudflareZoneID": {
-			"description": "Cloudflare Zon ID",
+			"description": "Cloudflare Zone ID",
 			"public": false,
 			"value": false
 		},

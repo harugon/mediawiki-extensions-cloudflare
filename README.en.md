@@ -5,8 +5,8 @@ This extension purges Cloudflare cache when updating pages or re-uploading image
 It's recommended to read the page [Using CloudFlare with MediaWiki – harugon's blog](https://blog.r9g.net/archives/121) before installation.
 
 ## Requirements
-- PHP 7.4
-- MediaWiki 1.35
+- PHP 8.0
+- MediaWiki 1.43
 
 ## Install
 
@@ -16,17 +16,27 @@ Add the following to LocalSettings.php along with your Cloudflare API informatio
 
 ```php
 wfLoadExtension('Cloudflare');
+$wgCloudflareAPIToken = '';
+$wgCloudflareZoneID = '';
+```
+
+The preferred authentication method is `$wgCloudflareAPIToken`. Create one at [API Tokens - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) with the "Cache Purge" permission.
+
+The deprecated `$wgCloudflareEmail` and `$wgCloudflareAPIKey` combination is still supported but will be removed in a future release.
+
+```php
+// Deprecated:
 $wgCloudflareEmail = '';
 $wgCloudflareAPIKey = '';
-$wgCloudflareZoneID = '';
 ```
 
 ## Config
 
 | Variable                 | Default value | Notes                                                                                                                   |
 | ------------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `$wgCloudflareEmail`     | `""`          | Your email used for logging in Cloudflare                                                                               |
-| `$wgCloudflareAPIKey`    | `""`          | API key ([API token - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) &rarr; Your global API key is needed) |
+| `$wgCloudflareAPIToken`    | `""`          | API token (create one at [API Tokens - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) with Cache Purge permission) |
+| `$wgCloudflareEmail`      | `""`          | **Deprecated.** Email address for legacy Cloudflare auth. Use `$wgCloudflareAPIToken` instead. |
+| `$wgCloudflareAPIKey`     | `""`          | **Deprecated.** Global API key for legacy Cloudflare auth. Use `$wgCloudflareAPIToken` instead. |
 | `$wgCloudflareZoneID`    | `""`          | Site (URL) ID (You can get it from the dashboard of the site)                                                           |
 | `$wgCloudflarePurgePage` | `false`       | Purge cache when articles are updated                                                                                   |
 | `$wgCloudflarePurgeFile` | `true`        | Purge cache when files (images) are updated                                                                             |
