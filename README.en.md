@@ -20,11 +20,23 @@ $wgCloudflareAPIToken = '';
 $wgCloudflareZoneID = '';
 ```
 
+The preferred authentication method is `$wgCloudflareAPIToken`. Create one at [API Tokens - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) with the "Cache Purge" permission.
+
+The deprecated `$wgCloudflareEmail` and `$wgCloudflareAPIKey` combination is still supported but will be removed in a future release.
+
+```php
+// Deprecated:
+$wgCloudflareEmail = '';
+$wgCloudflareAPIKey = '';
+```
+
 ## Config
 
 | Variable                 | Default value | Notes                                                                                                                   |
 | ------------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `$wgCloudflareAPIToken`    | `""`          | API token ([API token - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) &rarr; Your global API key is needed) |
+| `$wgCloudflareAPIToken`    | `""`          | API token (create one at [API Tokens - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) with Cache Purge permission) |
+| `$wgCloudflareEmail`      | `""`          | **Deprecated.** Email address for legacy Cloudflare auth. Use `$wgCloudflareAPIToken` instead. |
+| `$wgCloudflareAPIKey`     | `""`          | **Deprecated.** Global API key for legacy Cloudflare auth. Use `$wgCloudflareAPIToken` instead. |
 | `$wgCloudflareZoneID`    | `""`          | Site (URL) ID (You can get it from the dashboard of the site)                                                           |
 | `$wgCloudflarePurgePage` | `false`       | Purge cache when articles are updated                                                                                   |
 | `$wgCloudflarePurgeFile` | `true`        | Purge cache when files (images) are updated                                                                             |

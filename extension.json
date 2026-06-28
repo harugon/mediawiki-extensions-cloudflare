@@ -40,7 +40,17 @@
 	},
 	"config": {
 		"CloudflareAPIToken": {
-			"description": "Cloudflare API Token",
+			"description": "Cloudflare API Token (preferred)",
+			"public": false,
+			"value": false
+		},
+		"CloudflareEmail": {
+			"description": "DEPRECATED: Cloudflare Email. Use CloudflareAPIToken instead.",
+			"public": false,
+			"value": false
+		},
+		"CloudflareAPIKey": {
+			"description": "DEPRECATED: Cloudflare API Key. Use CloudflareAPIToken instead.",
 			"public": false,
 			"value": false
 		},

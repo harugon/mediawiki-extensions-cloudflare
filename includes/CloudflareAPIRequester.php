@@ -44,10 +44,26 @@ class CloudflareAPIRequester {
 	 */
 	public function cachePurge( $urls ): void {
 		$apiToken = $this->config->get( 'CloudflareAPIToken' );
+		$email = $this->config->get( 'CloudflareEmail' );
+		$apiKey = $this->config->get( 'CloudflareAPIKey' );
 		$zoneId = $this->config->get( 'CloudflareZoneID' );
 
-		// Check if the necessary configuration values are set
-		if ( empty( $apiToken ) || empty( $zoneId ) ) {
+		if ( empty( $zoneId ) ) {
+			throw new Exception( 'Cloudflare configuration values are missing' );
+		}
+
+		$headers = [ 'Content-Type' => 'application/json' ];
+
+		if ( !empty( $apiToken ) ) {
+			$headers['Authorization'] = 'Bearer ' . $apiToken;
+		} elseif ( !empty( $email ) && !empty( $apiKey ) ) {
+			wfDeprecatedMsg(
+				'CloudflareEmail and CloudflareAPIKey are deprecated, use CloudflareAPIToken instead',
+				'0.3.0'
+			);
+			$headers['X-Auth-Email'] = $email;
+			$headers['X-Auth-Key'] = $apiKey;
+		} else {
 			throw new Exception( 'Cloudflare configuration values are missing' );
 		}
 

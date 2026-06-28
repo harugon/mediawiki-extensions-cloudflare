@@ -29,11 +29,23 @@ $wgCloudflareAPIToken = '';
 $wgCloudflareZoneID = '';
 ```
 
+推奨される認証方法は `$wgCloudflareAPIToken` です。[API トークン - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) で "キャッシュのパージ" 権限を持つトークンを作成してください。
+
+非推奨の `$wgCloudflareEmail` と `$wgCloudflareAPIKey` も引き続き使用できますが、将来のリリースで削除されます。
+
+```php
+// 非推奨:
+$wgCloudflareEmail = '';
+$wgCloudflareAPIKey = '';
+```
+
 ## Config
 
 | 変数                   | 初期値 | 説明                                                                                                                 |
 | ---------------------- | ------ | -------------------------------------------------------------------------------------------------------------------- |
-| $wgCloudflareAPIToken    | ""     | API Tlekn（ [API トークン- Cloudflare](https://dash.cloudflare.com/profile/api-tokens)　 → Global API Key が必要です ） |
+| $wgCloudflareAPIToken    | ""     | API Token（ [API トークン - Cloudflare](https://dash.cloudflare.com/profile/api-tokens) で作成したキャッシュパージ権限付きトークン） |
+| $wgCloudflareEmail      | ""     | **非推奨.** レガシー認証用のメールアドレス。代わりに $wgCloudflareAPIToken を使用してください。 |
+| $wgCloudflareAPIKey     | ""     | **非推奨.** レガシー認証用のグローバルAPIキー。代わりに $wgCloudflareAPIToken を使用してください。 |
 | $wgCloudflareZoneID    | ""     | サイト（URL）固有の ID （サイトごとのダッシュボードで見ることができます）                                            |
 | $wgCloudflarePurgePage | false  | 記事を更新時に purge する                                                                                            |
 | $wgCloudflarePurgeFile | true   | ファイル（画像）を更新時に purge する                                                                                |
